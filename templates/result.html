@@ -1,0 +1,94 @@
+<<!DOCTYPE html>
+<html>
+<head>
+    <title>CropPlus Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Crop<span>Plus</span></div>
+        
+        <div style="display: flex; gap: 10px; margin-right: 20px;">
+            <button onclick="setLanguage('en')" id="enBtn" style="background: transparent; border: 1px solid white; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">EN</button>
+            <button onclick="setLanguage('hi')" id="hiBtn" style="background: transparent; border: 1px solid white; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">हिन्दी</button>
+        </div>
+
+        <div class="user-tag"><i data-lucide="user"></i> Hello, {{ name }}!</div>
+    </div>
+
+    <div class="container" style="max-width: 1000px; margin: 40px auto; padding: 20px;">
+        <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            
+            <div id="imgCard" class="card" style="padding: 10px; border-radius: 20px; border-width: 4px; border-style: solid; border-color: #444;">
+                <img src="{{ url_for('static', filename='uploads/' + image_file) }}" style="width: 100%; border-radius: 15px; display: block;">
+            </div>
+
+            <div class="card" style="text-align: left; padding: 30px;">
+                <div id="statusIndicator" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="{{ info.icon }}"></i>
+                    <strong style="text-transform: uppercase;">
+                        <span class="lang-en">Diagnosis Status</span>
+                        <span class="lang-hi" style="display:none;">जांच की स्थिति</span>
+                    </strong>
+                </div>
+
+                <h1 class="lang-en" style="font-size: 2.2rem; margin: 0;">{{ result.en }}</h1>
+                <h1 class="lang-hi" style="display:none; font-size: 2.2rem; margin: 0;">{{ result.hi }}</h1>
+                
+                <p id="accuracyValue" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 25px;">
+                    <span class="lang-en">Accuracy: {{ confidence }}%</span>
+                    <span class="lang-hi" style="display:none;">सटीकता: {{ confidence }}%</span>
+                </p>
+
+                <div id="infoBox" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left-width: 5px; border-left-style: solid; border-left-color: #444;">
+                    <h4 id="boxTitleEn" class="lang-en" style="margin: 0 0 10px 0;">{{ 'Status Detail:' if info.is_healthy else 'Prevention Method:' }}</h4>
+                    <h4 id="boxTitleHi" class="lang-hi" style="display:none; margin: 0 0 10px 0;">{{ 'स्थिति विवरण:' if info.is_healthy else 'बचाव का तरीका:' }}</h4>
+                    
+                    <p class="lang-en" style="margin: 0; line-height: 1.5;">{{ info.en }}</p>
+                    <p class="lang-hi" style="display:none; margin: 0; line-height: 1.5;">{{ info.hi }}</p>
+                </div>
+
+                <a id="actionBtn" href="/home?username={{ name }}" class="btn-predict" style="margin-top: 30px; display: block; text-align: center; text-decoration: none; border: none;">
+                    <span class="lang-en">Back to Home</span>
+                    <span class="lang-hi" style="display:none;">होम पेज पर जाएं</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic colors via JS to prevent VS Code Errors
+        const themeColor = "{{ info.color }}";
+        document.getElementById('imgCard').style.borderColor = themeColor;
+        document.getElementById('statusIndicator').style.color = themeColor;
+        document.getElementById('accuracyValue').style.color = themeColor;
+        document.getElementById('infoBox').style.borderLeftColor = themeColor;
+        document.getElementById('boxTitleEn').style.color = themeColor;
+        if(document.getElementById('boxTitleHi')) document.getElementById('boxTitleHi').style.color = themeColor;
+        document.getElementById('actionBtn').style.backgroundColor = themeColor;
+
+        // --- LANGUAGE SWITCHER LOGIC ---
+        function setLanguage(lang) {
+            const enEls = document.querySelectorAll('.lang-en');
+            const hiEls = document.querySelectorAll('.lang-hi');
+            
+            if(lang === 'hi') {
+                enEls.forEach(el => el.style.display = 'none');
+                hiEls.forEach(el => el.style.display = 'block');
+                document.getElementById('hiBtn').style.background = themeColor;
+                document.getElementById('enBtn').style.background = 'transparent';
+            } else {
+                enEls.forEach(el => el.style.display = 'block');
+                hiEls.forEach(el => el.style.display = 'none');
+                document.getElementById('enBtn').style.background = themeColor;
+                document.getElementById('hiBtn').style.background = 'transparent';
+            }
+        }
+        
+        // Initial setup
+        lucide.createIcons();
+        document.getElementById('enBtn').style.background = themeColor;
+    </script>
+</body>
+</html>

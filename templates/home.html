@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CropPlus Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Crop<span>Plus</span></div>
+        <div class="user-tag"><i data-lucide="user"></i> Hello, <span id="user-name">{{ name }}</span>!</div>
+    </div>
+
+    <div class="container" style="padding: 30px;">
+        <h2 style="margin-bottom: 30px;">Live Farm Monitoring</h2>
+        
+        <div class="grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+            <div class="card">
+                <i data-lucide="thermometer" style="color: #ff9f43;"></i>
+                <h3>Temperature</h3>
+                <p id="temp-val" style="font-size: 2rem; font-weight: bold;">{{ sensors.temp }}°C</p>
+            </div>
+            <div class="card">
+                <i data-lucide="droplets" style="color: #0fbcf9;"></i>
+                <h3>Humidity</h3>
+                <p id="hum-val" style="font-size: 2rem; font-weight: bold;">{{ sensors.humidity }}%</p>
+            </div>
+            <div class="card">
+                <i data-lucide="sprout" style="color: #22c55e;"></i>
+                <h3>Soil Moisture</h3>
+                <p id="moist-val" style="font-size: 2rem; font-weight: bold;">{{ sensors.moisture }}%</p>
+            </div>
+            <div class="card">
+                <i data-lucide="wind" style="color: #a29bfe;"></i>
+                <h3>CO2 Levels</h3>
+                <p id="co2-val" style="font-size: 2rem; font-weight: bold;">{{ sensors.co2 }} ppm</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 30px; padding: 20px;">
+            <h3>Environmental Trends (Live)</h3>
+            <canvas id="liveChart" height="100"></canvas>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <a href="/disease?name={{ name }}" class="btn-predict" style="padding: 15px 40px; font-size: 1.2rem; text-decoration:none; display:inline-block;">
+                <i data-lucide="camera"></i> Start Disease Scan
+            </a>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Error Fix: Wrapping Jinja variables in quotes strings to stop VS Code errors
+        const initialMoisture = parseFloat("{{ sensors.moisture }}") || 0;
+        const currentUserName = "{{ name }}";
+
+        const ctx = document.getElementById('liveChart').getContext('2d');
+        let liveChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['', '', '', '', 'Now'],
+                datasets: [{
+                    label: 'Soil Moisture %',
+                    data: [0, 0, 0, 0, initialMoisture],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { 
+                    y: { beginAtZero: true, max: 100, ticks: {color: '#fff'} }, 
+                    x: { ticks: {color: '#fff'} } 
+                },
+                plugins: { legend: { labels: {color: '#fff'} } }
+            }
+        });
+
+        function updateSensors() {
+            // Using backticks for URL to prevent string parsing errors
+            fetch(`/home?username=${currentUserName}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    const t = doc.getElementById('temp-val').innerText;
+                    const h = doc.getElementById('hum-val').innerText;
+                    const m = doc.getElementById('moist-val').innerText;
+                    const c = doc.getElementById('co2-val').innerText;
+
+                    document.getElementById('temp-val').innerText = t;
+                    document.getElementById('hum-val').innerText = h;
+                    document.getElementById('moist-val').innerText = m;
+                    document.getElementById('co2-val').innerText = c;
+
+                    // Update Chart line
+                    const newVal = parseFloat(m.replace('%', ''));
+                    liveChart.data.datasets[0].data.shift();
+                    liveChart.data.datasets[0].data.push(newVal);
+                    liveChart.update();
+                })
+                .catch(err => console.error("Stream connection lost:", err));
+        }
+
+        setInterval(updateSensors, 2000);
+    </script>
+</body>
+</html>

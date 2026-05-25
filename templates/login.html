@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CropPlus Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh; background: #020617;">
+    <div class="card" style="width: 350px; padding: 40px; text-align: center;">
+        <div class="logo" style="margin-bottom: 30px;">Crop<span>Plus</span></div>
+        <form action="/home" method="POST">
+            <input type="text" name="username" placeholder="Username" required style="width:100%; padding:12px; margin-bottom:15px; background:transparent; border:1px solid #22c55e; color:white; border-radius:10px;">
+            <input type="password" name="password" placeholder="Password" required style="width:100%; padding:12px; margin-bottom:25px; background:transparent; border:1px solid #22c55e; color:white; border-radius:10px;">
+            <button type="submit" class="btn-predict" style="width:100%; border:none; cursor:pointer;">Login</button>
+        </form>
+    </div>
+</body>
+</html>

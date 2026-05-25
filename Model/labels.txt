@@ -1,0 +1,15 @@
+0 Tomato Healthy
+1 Tomato mosaic virus
+2 Tomato Yellow Leaf Curl Virus
+3 Target Spot
+4 Tomato Septoria Leaf Spot
+5 Tomato leaf mold
+6 Tomato late blight
+7 Tomato early blight
+8 Tomato bacterial spot
+9 Strawberry healthy 
+10 Strawberry leaf scorch
+11 squash powdery mildew (strawberry)
+12 Soyabean healthy
+13 Peach Healthy
+14 Peach Bacterial Spot

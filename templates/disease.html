@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CropPlus | Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Crop<span>Plus</span></div>
+        <a href="/home" style="color: white; text-decoration: none;">← Dashboard</a>
+    </div>
+
+    <div class="container" style="max-width: 600px; text-align: center;">
+        <div class="card" style="padding: 50px;">
+            <i data-lucide="camera" style="width: 50px; height: 50px; color: var(--primary);"></i>
+            <h2>Scan Crop Leaf</h2>
+            <p style="color: var(--text-dim); margin-bottom: 30px;">AI analysis for 15+ plant types</p>
+            
+            <form action="/disease" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" id="f" style="display: none;" onchange="this.form.submit()">
+                <label for="f" class="btn-predict" style="cursor: pointer; display: inline-block;">Upload Photo</label>
+            </form>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
