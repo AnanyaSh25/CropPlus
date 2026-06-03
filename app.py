@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-import os, serial
+import os
+import serial
 from predict import predict_disease
 
 app = Flask(__name__)
@@ -17,7 +18,7 @@ DISEASE_DATA = {
     "Tomato Healthy": {"en": "Great! Maintain regular watering.", "hi": "नियमित सिंचाई जारी रखें।", "color": "#22c55e", "icon": "smile", "is_healthy": True},
     "Tomato Mosaic Virus": {"en": "Remove infected plants; control aphids.", "hi": "संक्रमित पौधों को हटा दें।", "color": "#ef4444", "icon": "alert-circle", "is_healthy": False},
     "Tomato Yellow Leaf Curl Virus": {"en": "Use neem oil to control whiteflies.", "hi": "सफेद मक्खियों के लिए नीम तेल का प्रयोग करें।", "color": "#ef4444", "icon": "alert-triangle", "is_healthy": False},
-    "Tomato Septoria Leaf Spot": {"en": "Improve air circulation; avoid overhead watering.", "hi": "हवा का संचार बढ़ाएं और ऊपर से पानी न डालें।", "color": "#ef4444", "icon": "alert-circle", "is_healthy": False},
+    "Tomato Septoria Leaf Spot": {"en": "Improve air circulation; avoid overhead watering.", "hi": "हवा का संचार बढ़ाएं और ऊपर से पानी न डालें।", "color": "#ef4444", "icon": "alert-circle", "is_healthy": False},
     "Tomato Target Spot": {"en": "Apply fungicides containing chlorothalonil.", "hi": "कवकनाशी (Fungicide) का प्रयोग करें।", "color": "#ef4444", "icon": "alert-circle", "is_healthy": False},
     "Tomato leaf mold": {"en": "Reduce humidity in the greenhouse.", "hi": "नमी कम करें।", "color": "#ef4444", "icon": "alert-circle", "is_healthy": False},
     "Tomato late blight": {"en": "Use copper-based fungicides immediately.", "hi": "कॉपर कवकनाशी का प्रयोग करें।", "color": "#ef4444", "icon": "alert-circle", "is_healthy": False},
@@ -37,6 +38,7 @@ DISEASE_DATA = {
     "Peach Healthy": {"en": "Tree is healthy. Prune in late winter.", "hi": "पेड़ स्वस्थ है। सर्दियों में छंटाई करें।", "color": "#22c55e", "icon": "smile", "is_healthy": True},
     "Peach Bacterial Spot": {"en": "Apply zinc sulfate or copper sprays.", "hi": "जिंक सल्फेट का छिड़काव करें।", "color": "#ef4444", "icon": "alert-triangle", "is_healthy": False}
 }
+
 @app.route('/')
 def login_page():
     return render_template('login.html')
@@ -73,5 +75,7 @@ def disease():
                                  image_file=file.filename, info=info, name=user)
     return render_template('disease.html', name=user)
 
+# Updated for Render cloud environment port assignment
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
